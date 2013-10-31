@@ -1,7 +1,7 @@
 #include <iostream>
 #include <conio.h>
 #include <cstdlib>
-#include <list.h>
+#include "List.h"
 
 using namespace std;
 
@@ -16,17 +16,15 @@ ostream &operator<<(ostream &out, const ConsoleList &list){
 }
 
 void ConsoleList::output(ostream &out) const{
-  int info;
-  if(nextDatum(true,info))
-    out<<info<< " ";
-  while(nextDatum(false,info))
-    out<<info<< " ";
+  int info1;
+  if(nextInfo(true,info1))
+    out<<info1<<" ";
+  while(nextInfo(false,info1))
+    out<<info1<<" ";
 }
 
 int main(){
-  int m,m1,n,n1,k,z;
-  //ConsoleList list;
-  //List spis,spis_t;
+  int m,n,k,z;
   ConsoleList spis,spis_t;
   while(1){
     cout<<endl<<"Select an action: "<<endl;
@@ -47,31 +45,31 @@ int main(){
            cout<<"Vvedite "<<i+1<<" element spiska: "; cin>>n;
            spis.input(n);
          }
-         spis.show();
+         cout<<spis<<endl;
          break;
        }
        case 2:{
          cout<<endl<<"Vvedite element dlya dobavlenia v nachalo: ";cin>>n;
          spis.push_beg(n);
-         spis.show();
+         cout<<spis<<endl;
          break;
        }
        case 3:{
          cout<<endl<<"Vvedite element dlya dobavlenia v konec: ";cin>>n;
          spis.push_end(n);
-         spis.show();
+         cout<<spis<<endl;
          break;
        }
        case 4:{
          cout<<endl<<"Udalyaem element:"<<endl;
          spis.pop_beg();
-         spis.show();
+         cout<<spis<<endl;
          break;
        }
        case 5:{
          cout<<endl<<"Udalyaem element:"<<endl;
          spis.pop_end();
-         spis.show();
+         cout<<spis<<endl;
          break;
        }
        case 6:{
@@ -81,10 +79,10 @@ int main(){
            cout<<"Vvedite "<<i+1<<" element spiska: "; cin>>k;
            spis_t.input(k);
          }
-         spis_t.show();
+         cout<<spis_t<<endl;
          spis.push_list(n,spis_t);
          cout<<endl;
-         spis.show();
+         cout<<spis<<endl;
          break;
        }
        case 7:{
@@ -92,7 +90,7 @@ int main(){
          cout<<endl<<"Vvedite cifru,posle kotoroi udalit podstroku: "; cin>>n;
          for(int i=0;i<m;i++)
             spis.pop_list(n);
-         spis.show();
+         cout<<spis<<endl;
          break;
        }
        case 8:{

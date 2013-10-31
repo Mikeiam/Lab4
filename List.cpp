@@ -1,53 +1,33 @@
-#include <iostream>
-#include <conio.h>
-#include <cstdlib>
-#include <list.h>
+#include "list.h"
 
-using namespace std;
 
 struct node{
   int info;
   node *next;
 };
 
-class List::ListImplementation
+class List::ListImpl{
   node *head;
   public:
-   ListImplementation();
-   ListImplementation(const ListImplementation &list);
-   ~ListImplementation();
-   ListImplementation&operator=(const ListImplementation &list);
+   ListImpl();
+   ListImpl(const ListImpl &list);
+   ~ListImpl();
    void input(int n);
-   void show();
    void push_beg(int n);
    void push_end(int n);
    void pop_end();
    void pop_beg();
-   void push_list(int n,ListImplementation &list);
-   node *get_head();
+   void push_list(int n,ListImpl &list);
    void pop_list(int n);
+   bool nextInfo(bool start,int &info) const;
 };
 
 List::List():pimpl(0){
-  pimpl=new SetImplementation();
+  pimpl=new ListImpl();
 }
 
 List::List(const List &spis){
-  pimpl=new ListImplementation();
-  node *temp,*temp1;
-  if(!spis.pimpl->head){ pimpl->head=0; return;}
-  pimpl->head=new node;
-  (pimpl->head)->info=spis.head->info;
-  (pimpl->head)->next=0;
-  (pimpl->temp)=head;
-  (pimpl->temp1)=(spis.pimpl->head)->next;
-  while(pimpl->temp1){
-    (pimpl->temp)->next=new node;
-    (pimpl->temp)->next->info=pimpl->temp1->info;
-    (pimpl->temp)->next->next=0;
-    (pimpl->temp)=pimpl->temp->next;
-    (pimpl->temp1)=pimpl->temp1->next;
-  }
+  pimpl=new ListImpl(*spis.pimpl);
 }
 
 List::~List(){
@@ -55,18 +35,12 @@ List::~List(){
   pimpl=0;
 }
 
-List &List::operator=(const List &spis){
-  return pimpl->operator=spis;
+bool List::nextInfo(bool start,int &info) const{
+  return pimpl->nextInfo(start,info);
 }
-
-
 
 void List::input(int n){
   pimpl->input(n);
-}
-
-void List::show(){
-  pimpl->show();
 }
 
 void List::push_beg(int n){
@@ -85,12 +59,8 @@ void List::pop_beg(){
   pimpl->pop_beg();
 }
 
-void List::push_list(int n,ListImplementation &list){
-  pimpl->push_list(n,list)
-}
-
-node *List::get_head(){
-  return pimpl->head;
+void List::push_list(int n,List &list){
+  pimpl->push_list(n,*list.pimpl);
 }
 
 void List::pop_list(int n){
@@ -98,33 +68,49 @@ void List::pop_list(int n){
 }
 
 
-List::ListImplementation::ListImplementation(){
-  head=NULL;
+
+
+List::ListImpl::ListImpl(){
+  head=0;
 }
 
-List::ListImplementation::~ListImplementation(){
-  while (head!=NULL){
-  node *temp=head->next;
-  delete head;
-  head=temp;
+
+List::ListImpl::ListImpl(const ListImpl &spis){
+  node *temp,*temp1;
+  if(!spis.head){ head=0; return;}
+  head=new node;
+  head->info=spis.head->info;
+  head->next=0;
+  temp=head;
+  temp1=spis.head->next;
+  while(temp1){
+    temp->next=new node;
+    temp->next->info=temp1->info;
+    temp->next->next=0;
+    temp=temp->next;
+    temp1=temp1->next;
+  }
 }
 
-void List::ListImplementation::input(int n){
+
+List::ListImpl::~ListImpl(){
+  while(head){
+    node *temp=head->next;
+    delete head;
+    head=temp;
+  }
+}
+
+
+void List::ListImpl::input(int n){
   node *temp=new node;
   temp->info=n;
   temp->next=head;
   head=temp;
 }
 
-void List::ListImplementation::show(){
-  node *temp=head;
-  while (temp!=NULL){
-    cout<<temp->info<<" ";
-    temp=temp->next;
-  }
-}
 
-void List::ListImplementation::push_beg(int n){
+void List::ListImpl::push_beg(int n){
   node *temp1=new node;
   temp1->info=n;
   node *temp2=head;
@@ -135,21 +121,24 @@ void List::ListImplementation::push_beg(int n){
   temp1=0;
 }
 
-void List::ListImplementation::push_end(int n){
+
+void List::ListImpl::push_end(int n){
   node *temp=new node;
   temp->info=n;
   temp->next=head;
   head=temp;
 }
 
-void List::ListImplementation::pop_end(){
+
+void List::ListImpl::pop_end(){
   node *temp=head;
   head=head->next;
   delete temp;
   temp=0;
 }
 
-void List::ListImplementation::pop_beg(){
+
+void List::ListImpl::pop_beg(){
   node *temp2;
   node *temp=head;
   while(temp->next->next)
@@ -161,20 +150,22 @@ void List::ListImplementation::pop_beg(){
   temp2=0;
 }
 
-void List::ListImplementation::push_list(int n,ListImplementation &spis_t){
+
+void List::ListImpl::push_list(int n,ListImpl &spis_t){
   node *temp=head;
   node *temp1;
   while(temp->info!=n){
     temp1=temp;
     temp=temp->next;
   }
-  temp1->next=spis_t.get_head();
+  temp1->next=spis_t.head;
   while(temp1->next)
     temp1=temp1->next;
   temp1->next=temp;
 }
 
-void List::ListImplementation::pop_list(int n){
+
+void List::ListImpl::pop_list(int n){
   node *temp2;
   node *temp=head;
   while(temp->next->info!=n){
@@ -187,24 +178,15 @@ void List::ListImplementation::pop_list(int n){
   temp=0;
 }
 
-ListImplementation &List::ListImplementation::operator=(const ListImplementation &spis){
-  node *temp,*temp1;
-  if(this==&spis){return *this;}
-  else{
-    head=NULL;
-    head=new node;
-    head->info=spis.head->info;
-    head->next=0;
-    temp=head;
-    temp1=spis.head->next;
-    while(temp1){
-      temp->next=new node;
-      temp->next->info=temp1->info;
-      temp->next->next=0;
-      temp=temp->next;
-      temp1=temp1->next;
-    }
-    return *this;
-  }
-}
 
+bool List::ListImpl::nextInfo(bool start,int &info) const{
+  static node *now;
+  if(start)
+    now=head;
+  bool value=now!=0;
+  if(value){
+    info=now->info;
+    now=now->next;
+  }
+  return value;
+}

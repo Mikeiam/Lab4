@@ -1,24 +1,25 @@
-#ifndef LIST_H_INCLUDED
-#define LIST_H_INCLUDED
+#ifndef LIST_H
+#define LIST_H
+
+
+
 class List{
-  class ListImplementation;
-  ListImplementation *pimpl;
+  class ListImpl;
+  ListImpl *pimpl;
   public:
-    List() {head=NULL;}
+    List();
     List(const List &);
     ~List();
-    List&operator=(const List &);
     void input(int n);
-    void show();
-    void pop(int n);
     void push_beg(int n);
     void push_end(int n);
     void pop_end();
     void pop_beg();
     void push_list(int,List &);
-    node *get_head(){return head;};
     void pop_list(int);
+  protected:
+    bool nextInfo(bool start,int &info) const;
 };
 
 
-#endif // LIST_H_INCLUDED
+#endif // LIST_H
